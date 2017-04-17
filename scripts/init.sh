@@ -16,10 +16,10 @@ if [ -n "$SUPW" ]; then
 fi
 
 # Remove old PID files
-if [ ! -f "/run/supervisord.pid" ]; then
+if [ -f "/run/supervisord.pid" ]; then
     /bin/rm -f /run/supervisord.pid
 fi
-if [ ! -f "/var/run/mumble-server/mumble-server.pid" ]; then
+if [ -f "/var/run/mumble-server/mumble-server.pid" ]; then
     /bin/rm -f /var/run/mumble-server/mumble-server.pid
 fi
 
