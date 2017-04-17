@@ -1,18 +1,21 @@
 #!/bin/bash
 
 # Create default config if it doesn't exist
-if [ ! -f "/opt/mumble-server/mumble-server.ini" ]; then
-    cp /opt/mumble-server-back/mumble-server.ini /opt/mumble-server/mumble-server.ini
+if [ ! -f "/mumble/mumble-server.ini" ]; then
+    cp /mumble-default/mumble-server.ini /mumble/mumble-server.ini
 fi
 
 # Setting serverpassword
 if [ -n "$SERVERPASSWORD" ]; then
-    sed -i 's/serverpassword=.*/serverpassword='"$SERVERPASSWORD"'/' /opt/mumble-server/mumble-server.ini
+    sed -i 's/serverpassword=.*/serverpassword='"$SERVERPASSWORD"'/' /mumble/mumble-server.ini
 fi
+
+# Setting correct permissions
+chown -R mumble-server:mumble-server /mumble
 
 # Setting supw
 if [ -n "$SUPW" ]; then
-    sudo -u mumble-server /usr/sbin/murmurd -fg -ini /opt/mumble-server/mumble-server.ini -supw "$SUPW"
+    sudo -u mumble-server /usr/sbin/murmurd -fg -ini /mumble/mumble-server.ini -supw "$SUPW"
 fi
 
 # Remove old PID files

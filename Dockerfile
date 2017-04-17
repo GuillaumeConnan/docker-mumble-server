@@ -23,15 +23,15 @@ RUN apt-get -y -q install sudo             \
                           supervisor       \
                           mumble-server
 
-# Mumble-server
+# mumble-server (1.2.18-1)
 
-RUN mkdir -p /opt/mumble-server         \
-             /opt/mumble-server-back
+RUN mkdir -p /mumble            \
+             /mumble-default
 
-ADD conf/mumble-server/mumble-server.ini /opt/mumble-server-back/mumble-server.ini
+ADD conf/mumble-server/mumble-server.ini /mumble-default/mumble-server.ini
 
-RUN chown -R mumble-server:mumble-server /opt/mumble-server         && \
-    chown -R mumble-server:mumble-server /opt/mumble-server-back
+RUN chown -R mumble-server:mumble-server /mumble            && \
+    chown -R mumble-server:mumble-server /mumble-default
 
 # Cleaning
 
@@ -51,7 +51,7 @@ ADD scripts/init.sh                 /init.sh
 
 EXPOSE 64738
 
-VOLUME ["/var/log/supervisor/", "/opt/mumble-server/"]
+VOLUME ["/var/log/supervisor/", "/mumble/"]
 
 # Init
 
