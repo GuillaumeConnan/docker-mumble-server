@@ -1,58 +1,39 @@
-#
-# VERSION 0.1.0
-#
-
-FROM debian:stretch
+FROM alpine:edge
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
+LABEL version="0.1.0"
 
-ENV DEBIAN_FRONTEND noninteractive
+RUN (                                                                     \
+        : "Setting repositories, updating and installing softwares"    && \
+        echo "http://dl-cdn.alpinelinux.org/alpine/edge/main"             \
+             >  /etc/apk/repositories                                  && \
+        echo "http://dl-cdn.alpinelinux.org/alpine/edge/community"        \
+             >> /etc/apk/repositories                                  && \
+        echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing"          \
+             >> /etc/apk/repositories                                  && \
+        apk --no-cache update                                          && \
+        apk --no-cache upgrade                                         && \
+        apk --no-cache add sudo icu murmur                             && \
+                                                                          \
+        : "murmur 1.2.19-r1"                                           && \
+        mkdir -p /mumble-server /run/mumble-server                     && \
+        chown -R murmur:murmur /mumble-server /run/mumble-server       && \
+                                                                          \
+        : "Cleaning"                                                   && \
+        rm -fr /tmp/*                                                  && \
+        rm -fr /var/cache/apk/*                                        && \
+        rm -fr /var/tmp/*                                              && \
+        rm -fr /var/run                                                && \
+        ln -s /run /var/run                                               \
+    )
 
-# Setting repositories, updating and installing softwares
+ADD scripts/start.sh /start.sh
 
-RUN echo "deb http://deb.debian.org/debian stretch main contrib non-free"         >  /etc/apt/sources.list    && \
-    echo "deb http://deb.debian.org/debian stretch-updates main contrib non-free" >> /etc/apt/sources.list    && \
-    echo "deb http://security.debian.org stretch/updates main contrib non-free"   >> /etc/apt/sources.list
-
-RUN apt-get update                && \
-    apt-get -y -q upgrade         && \
-    apt-get -y -q dist-upgrade    && \
-    apt-get -y -q autoclean       && \
-    apt-get -y -q autoremove
-
-RUN apt-get -y -q install sudo             \
-                          supervisor       \
-                          mumble-server
-
-# mumble-server (1.2.18-1)
-
-RUN mkdir -p /mumble            \
-             /mumble-default
-
-ADD conf/mumble-server/mumble-server.ini /mumble-default/mumble-server.ini
-
-RUN chown -R mumble-server:mumble-server /mumble            && \
-    chown -R mumble-server:mumble-server /mumble-default
-
-# Cleaning
-
-RUN apt-get clean                  && \
-    rm -fr /tmp/*                  && \
-    rm -fr /var/tmp/*              && \
-    rm -fr /var/lib/apt/lists/*
-
-# Adding services
-
-RUN mkdir -p /var/log/supervisor
-
-ADD conf/supervisor/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
-ADD scripts/init.sh                 /init.sh
-
-# Expose ports and volumes
+# Expose port and volume
 
 EXPOSE 64738
 
-VOLUME ["/var/log/supervisor/", "/mumble/"]
+VOLUME ["/mumble-server"]
 
 # Init
 
-CMD ["/bin/bash", "-e", "/init.sh"]
+CMD ["sudo", "-Eu", "murmur", "/bin/sh", "/start.sh"]
