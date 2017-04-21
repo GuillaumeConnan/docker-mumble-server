@@ -1,6 +1,6 @@
 FROM alpine:edge
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
-LABEL version="0.1.0"
+LABEL version="0.2.1"
 
 RUN (                                                                     \
         : "Setting repositories, updating and installing softwares"    && \
@@ -19,10 +19,7 @@ RUN (                                                                     \
         chown -R murmur:murmur /mumble-server /run/mumble-server       && \
                                                                           \
         : "Cleaning"                                                   && \
-        rm -fr /tmp/*                                                  && \
-        rm -fr /var/cache/apk/*                                        && \
-        rm -fr /var/tmp/*                                              && \
-        rm -fr /var/run                                                && \
+        rm -fr /tmp/* /var/cache/apk/* /var/tmp/* /var/run             && \
         ln -s /run /var/run                                               \
     )
 
@@ -36,4 +33,4 @@ VOLUME ["/mumble-server"]
 
 # Init
 
-CMD ["sudo", "-Eu", "murmur", "/bin/sh", "/start.sh"]
+CMD ["/usr/bin/sudo", "-Eu", "murmur", "/bin/sh", "/start.sh"]
