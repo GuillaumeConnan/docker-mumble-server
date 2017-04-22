@@ -1,6 +1,6 @@
 FROM alpine:edge
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
-LABEL version="0.2.1"
+LABEL version="0.2.2"
 
 RUN (                                                                     \
         : "Setting repositories, updating and installing softwares"    && \
@@ -33,4 +33,4 @@ VOLUME ["/mumble-server"]
 
 # Init
 
-CMD ["/usr/bin/sudo", "-Eu", "murmur", "/bin/sh", "/start.sh"]
+CMD ["/bin/sh", "/start.sh"]
