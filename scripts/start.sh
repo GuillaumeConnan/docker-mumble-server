@@ -1,10 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 mkdir -p ${MS_PIDPATH:=/var/run/mumble-server/}
 ${MS_PIDFILE:=$MS_PIDPATH/mumble-server.pid}
 
-${MS_CONFIGFILE:=/mumble-server/mumble-server.ini}
-${MS_DATABASE:=/mumble-server/mumble-server.sqlite}
+${MS_VOLUME:=/mumble-server}
+
+${MS_CONFIGFILE:=$MS_VOLUME/mumble-server.ini}
+${MS_LOGFILE:=$MS_VOLUME/mumble-server.log}
+${MS_DATABASE:=$MS_VOLUME/mumble-server.sqlite}
 
 # Generate config if needed
 if [ ! -f "$MS_CONFIGFILE" ]
@@ -30,6 +33,11 @@ else
     fi
 fi
 
+if [ ! -f "$MS_LOGFILE" ]
+then
+	touch $MS_LOGFILE
+fi
+
 # Remove old PID file
 if [ -f "$MS_PIDFILE" ]
 then
@@ -39,17 +47,17 @@ fi
 # Setting supw
 if [ -n "$MS_SUPW" ]
 then
-    /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW"
+    /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW" &>>$MS_LOGFILE
 else
 	if [ ! -f "$MS_DATABASE" ]
 	then
 		MS_SUPW=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
-		/usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW"
-		echo $MS_SUPW > /mumble-server/supw
+		/usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW" &>>$MS_LOGFILE
+		echo $MS_SUPW > $MS_VOLUME/supw
 	fi
 fi
 
-chown -R mumble-server:mumble-server /mumble-server $MS_PIDPATH
+chown -R mumble-server:mumble-server $MS_VOLUME/* $MS_PIDPATH
 
 # Init
-sudo -u mumble-server /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE
+sudo -u mumble-server /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE &>>$MS_LOGFILE

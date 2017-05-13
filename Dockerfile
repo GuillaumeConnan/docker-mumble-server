@@ -2,7 +2,7 @@ FROM debian:stretch
 
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
 
-LABEL version="0.3.2"              \
+LABEL version="0.3.3"              \
       mumble_version="1.2.18-1"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -36,4 +36,4 @@ EXPOSE 64738
 VOLUME ["/mumble-server"]
 
 # Init
-CMD ["/bin/sh", "/start.sh"]
+CMD ["/bin/bash", "/start.sh"]
