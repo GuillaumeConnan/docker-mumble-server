@@ -2,8 +2,8 @@ FROM debian:stretch
 
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
 
-LABEL version="0.3.0"              \
-      murmur_version="1.2.18-1"
+LABEL version="0.3.1"              \
+      mumble_version="1.2.18-1"
 
 ENV DEBIAN_FRONTEND noninteractive
 
