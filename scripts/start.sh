@@ -1,13 +1,13 @@
 #!/bin/bash
 
-mkdir -p ${MS_PIDPATH:=/var/run/mumble-server/}
-${MS_PIDFILE:=$MS_PIDPATH/mumble-server.pid}
+mkdir -p ${MS_PIDPATH:=/var/run/mumble-server}
+MS_PIDFILE=${MS_PIDFILE:="$MS_PIDPATH/mumble-server.pid"}
 
-${MS_VOLUME:=/mumble-server}
+MS_VOLUME=${MS_VOLUME:="/mumble-server"}
 
-${MS_CONFIGFILE:=$MS_VOLUME/mumble-server.ini}
-${MS_LOGFILE:=$MS_VOLUME/mumble-server.log}
-${MS_DATABASE:=$MS_VOLUME/mumble-server.sqlite}
+MS_CONFIGFILE=${MS_CONFIGFILE:="$MS_VOLUME/mumble-server.ini"}
+MS_LOGFILE=${MS_LOGFILE:="$MS_VOLUME/mumble-server.log"}
+MS_DATABASE=${MS_DATABASE:="$MS_VOLUME/mumble-server.sqlite"}
 
 # Generate config if needed
 if [ ! -f "$MS_CONFIGFILE" ]
@@ -57,7 +57,7 @@ else
 	fi
 fi
 
-chown -R mumble-server:mumble-server $MS_VOLUME/* $MS_PIDPATH
+chown -R mumble-server:mumble-server $MS_VOLUME $MS_PIDPATH
 
 # Init
 sudo -u mumble-server /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE &>>$MS_LOGFILE
