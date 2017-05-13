@@ -3,7 +3,11 @@
 ${MS_CONFIGFILE:=/mumble-server/mumble-server.ini}
 ${MS_PIDFILE:=/var/run/mumble-server/mumble-server.pid}
 
-# Generating config if needed
+mkdir -p ${MS_PIDPATH:=/var/run/mumble-server/}
+
+${MS_PIDFILE:=$MS_PIDPATH/mumble-server.pid}
+
+# Generate config if needed
 if [ ! -f "$MS_CONFIGFILE" ]; then
     echo "database=${MS_DATABASE:=/mumble-server/mumble-server.sqlite}"                                       >  $MS_CONFIGFILE
     echo "icesecretwrite="                                                                                    >> $MS_CONFIGFILE
@@ -14,7 +18,7 @@ if [ ! -f "$MS_CONFIGFILE" ]; then
     echo "serverpassword=$MS_SERVERPASSWORD"                                                                  >> $MS_CONFIGFILE
     echo "bandwidth=${MS_BANDWIDTH:=130000}"                                                                  >> $MS_CONFIGFILE
     echo "users=${MS_USERS:=100}"                                                                             >> $MS_CONFIGFILE
-    echo "uname=murmur"                                                                                       >> $MS_CONFIGFILE
+    echo "uname=mumble-server"                                                                                >> $MS_CONFIGFILE
     echo "[Ice]"                                                                                              >> $MS_CONFIGFILE
     echo "Ice.Warn.UnknownProperties=1"                                                                       >> $MS_CONFIGFILE
     echo "Ice.MessageSizeMax=65536"                                                                           >> $MS_CONFIGFILE
@@ -27,10 +31,10 @@ fi
 
 # Setting supw
 if [ -n "$MS_SUPW" ]; then
-    /usr/bin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW"
+    /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW"
 fi
 
-chown -R murmur:murmur /mumble-server
+chown -R mumble-server:mumble-server /mumble-server $MS_PIDPATH
 
 # Init
-sudo -u murmur /usr/bin/murmurd -fg -ini $MS_CONFIGFILE
+sudo -u mumble-server /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE

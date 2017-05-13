@@ -1,24 +1,32 @@
-FROM alpine:edge
+FROM debian:stretch
+
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
 
-LABEL version="0.2.3"               \
-      murmur_version="1.2.19-r1"
+LABEL version="0.3.0"              \
+      murmur_version="1.2.18-1"
 
-RUN (                                                                     \
-        : "Setting repositories, updating and installing softwares"    && \
-        echo "http://dl-cdn.alpinelinux.org/alpine/edge/main"             \
-             >  /etc/apk/repositories                                  && \
-        echo "http://dl-cdn.alpinelinux.org/alpine/edge/community"        \
-             >> /etc/apk/repositories                                  && \
-        echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing"          \
-             >> /etc/apk/repositories                                  && \
-        apk --no-cache update                                          && \
-        apk --no-cache upgrade                                         && \
-        apk --no-cache add sudo icu murmur                             && \
-        mkdir -p /mumble-server /run/mumble-server                     && \
-        chown -R murmur:murmur /mumble-server /run/mumble-server       && \
-        rm -fr /tmp/* /var/cache/apk/* /var/tmp/* /var/run             && \
-        ln -s /run /var/run                                               \
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN (                                                                                       \
+        echo "deb http://deb.debian.org/debian stretch main contrib non-free"               \
+             >  /etc/apt/sources.list                                                    && \
+        echo "deb http://deb.debian.org/debian stretch-updates main contrib non-free"       \
+             >> /etc/apt/sources.list                                                    && \
+        echo "deb http://security.debian.org stretch/updates main contrib non-free"         \
+             >> /etc/apt/sources.list                                                    && \
+        apt-get update                                                                   && \
+        apt-get -y -q upgrade                                                            && \
+        apt-get -y -q dist-upgrade                                                       && \
+        apt-get -y -q autoclean                                                          && \
+        apt-get -y -q autoremove                                                         && \
+        apt-get -y -q install sudo                                                          \
+                              mumble-server                                              && \
+        mkdir -p /mumble-server                                                          && \
+        chown -R mumble-server:mumble-server /mumble-server                              && \
+        apt-get clean                                                                    && \
+        rm -fr /tmp/*                                                                    && \
+        rm -fr /var/tmp/*                                                                && \
+        rm -fr /var/lib/apt/lists/*                                                         \
     )
 
 ADD scripts/start.sh /start.sh
