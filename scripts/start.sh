@@ -44,20 +44,13 @@ then
     rm -f $MS_PIDFILE
 fi
 
+chown -R mumble-server:mumble-server $MS_VOLUME $MS_PIDPATH
+
 # Setting supw
 if [ -n "$MS_SUPW" ]
 then
-    /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW" &>>$MS_LOGFILE
-else
-	if [ ! -f "$MS_DATABASE" ]
-	then
-		MS_SUPW=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
-		/usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW" &>>$MS_LOGFILE
-		echo $MS_SUPW > $MS_VOLUME/supw
-	fi
+    sudo -u mumble-server /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE -supw "$MS_SUPW" &>>$MS_LOGFILE
 fi
-
-chown -R mumble-server:mumble-server $MS_VOLUME $MS_PIDPATH
 
 # Init
 sudo -u mumble-server /usr/sbin/murmurd -fg -ini $MS_CONFIGFILE &>>$MS_LOGFILE
