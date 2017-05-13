@@ -2,7 +2,7 @@ FROM debian:stretch
 
 MAINTAINER Guillaume CONNAN "guillaume.connan44@gmail.com"
 
-LABEL version="0.3.1"              \
+LABEL version="0.3.2"              \
       mumble_version="1.2.18-1"
 
 ENV DEBIAN_FRONTEND noninteractive
